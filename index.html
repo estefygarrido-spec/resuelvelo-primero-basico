@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resuélvelo 1° básico</title>
+
+<style>
+body{
+font-family: Arial, sans-serif;
+background:#f3f9ff;
+text-align:center;
+padding:20px;
+}
+
+.caja{
+max-width:750px;
+margin:auto;
+background:white;
+padding:25px;
+border-radius:20px;
+box-shadow:0 0 10px rgba(0,0,0,0.2);
+}
+
+button{
+padding:12px 18px;
+margin:8px;
+font-size:18px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+}
+
+.opcion{background:#dff1ff;}
+.next{background:#4caf50;color:white;display:none;}
+
+#mensaje{font-size:20px;font-weight:bold;margin-top:10px;}
+#paso{font-size:22px;color:#1565c0;font-weight:bold;}
+#estrellas{font-size:22px;margin-bottom:10px;}
+
+input{font-size:18px;width:80px;text-align:center;}
+</style>
+</head>
+
+<body>
+
+<div class="caja">
+
+<h1>⭐ Resuélvelo ⭐</h1>
+<div id="estrellas">⭐ 0</div>
+<div id="paso"></div>
+<div id="contenido"></div>
+
+<p id="mensaje"></p>
+
+<button id="btnNext" class="next" onclick="nextStep()">Siguiente ➡️</button>
+
+</div>
+
+<script>
+
+let step=1;
+let stars=0;
+
+const p = {a:6,b:3,answer:9};
+
+function speak(t){
+const u=new SpeechSynthesisUtterance(t);
+u.lang="es-CL";
+u.rate=0.95;
+speechSynthesis.speak(u);
+}
+
+function addStar(){
+stars++;
+document.getElementById("estrellas").innerText="⭐ "+stars;
+}
+
+function ok(msg){
+document.getElementById("mensaje").innerText="✅ "+msg;
+speak(msg);
+document.getElementById("btnNext").style.display="inline-block";
+addStar();
+}
+
+function bad(){
+let m=["Inténtalo nuevamente","Observa con atención","Tú puedes"];
+let msg=m[Math.floor(Math.random()*m.length)];
+document.getElementById("mensaje").innerText="❌ "+msg;
+speak(msg);
+}
+
+function nextStep(){
+step++;
+document.getElementById("mensaje").innerText="";
+document.getElementById("btnNext").style.display="none";
+render();
+}
+
+function check(val){
+if(val) ok("Muy bien"); else bad();
+}
+
+function checkSum(){
+let v=Number(document.getElementById("ans").value);
+if(v===p.answer) ok("Correcto"); else bad();
+}
+
+function render(){
+
+let c=document.getElementById("contenido");
+let t=document.getElementById("paso");
+
+if(step==1){
+t.innerText="Paso 1: Leer";
+c.innerHTML=`
+<p>Martín tiene ${p.a} manzanas y recibe ${p.b} más.</p>
+<p>¿De quién habla?</p>
+<button class='opcion' onclick='check(true)'>Martín</button>
+<button class='opcion' onclick='check(false)'>Sofía</button>
+`;
+speak("Martín tiene seis manzanas y recibe tres más");
+}
+
+else if(step==2){
+t.innerText="Paso 2: Explicar";
+c.innerHTML=`
+<p>¿Qué pasó?</p>
+<button class='opcion' onclick='check(true)'>Recibió más manzanas</button>
+<button class='opcion' onclick='check(false)'>Perdió manzanas</button>
+`;
+}
+
+else if(step==3){
+t.innerText="Paso 3: Dibujar";
+c.innerHTML=`
+<p>🍎🍎🍎🍎🍎🍎 + 🍎🍎🍎</p>
+<p>¿Representa el problema?</p>
+<button class='opcion' onclick='check(true)'>Sí</button>
+<button class='opcion' onclick='check(false)'>No</button>
+`;
+}
+
+else if(step==4){
+t.innerText="Paso 4: Plan";
+c.innerHTML=`
+<p>¿Qué operación usamos?</p>
+<button class='opcion' onclick='check(true)'>Suma</button>
+<button class='opcion' onclick='check(false)'>Resta</button>
+`;
+}
+
+else if(step==5){
+t.innerText="Paso 5: Estimar";
+c.innerHTML=`
+<p>La respuesta será...</p>
+<button class='opcion' onclick='check(false)'>Menor que 6</button>
+<button class='opcion' onclick='check(true)'>Cerca de 9</button>
+<button class='opcion' onclick='check(false)'>Más de 20</button>
+`;
+}
+
+else if(step==6){
+t.innerText="Paso 6: Resolver";
+c.innerHTML=`
+<p>${p.a} + ${p.b} = ?</p>
+<input id='ans'>
+<br><br>
+<button onclick='checkSum()'>Comprobar</button>
+`;
+}
+
+else if(step==7){
+t.innerText="Paso 7: Comprobar";
+c.innerHTML=`
+<p>¿Tiene sentido?</p>
+<button class='opcion' onclick='check(true)'>Sí, porque aumentó</button>
+<button class='opcion' onclick='check(false)'>No</button>
+`;
+}
+
+else{
+t.innerText="🏆 Terminado";
+c.innerHTML=`<h2>¡Completaste la estrategia!</h2><p>Estrellas: ⭐ ${stars}</p>`;
+}
+}
+
+render();
+
+</script>
+
+</body>
+</html>
